@@ -1,0 +1,1612 @@
+<html>
+    <head>
+        <title>endless test</title>
+        <style>
+    .cube-container{
+        width: 420px; /*width of the cube*/
+        height: 280px; /*height of the cube*/
+        perspective: 1000px; /*creates the 3d perspective effect*/
+        position: relative;
+        border: 1px solid white;
+        overflow: hidden;
+        margin-bottom: 0px;
+    }
+    .cube{
+        width: 100%;
+        height: 100%;
+        position: relative; /*important for positioning faces*/
+        transform-style: preserve-3d;
+        transform: rotateX(-9deg) rotateY(0deg) translateZ(270px);/*initial rotation for view*/
+        top: -178px;     
+        right: 148px
+       /* animation: rotateCube 13s infinite linear; */
+    }
+    /* Cube Rotation Animation */
+@keyframes rotateCube {
+    from {
+        transform: rotateX(-30deg) rotateY(0deg);
+    }
+    to {
+        transform: rotateX(-30deg) rotateY(360deg);
+    }
+}
+    /* individual cube faces*/
+    .face{
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    display: flex; /* add grid here if needed*/
+    box-sizing: border-box;
+    color: white;
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    }
+    /*Positioning and rotating each face*/
+    .front{
+        transform: translateZ(210px);
+    }
+    .back{
+        transform: rotateY(180deg) translateZ(210px);
+    }
+    .right{
+        transform: rotateY(90deg) translateZ(210px);
+    }
+    .left{
+        transform: rotateY(-90deg) translateZ(210px);
+    }
+    .top{
+        transform: rotateX(90deg) translateZ(210px);
+    }
+    .bottom{
+        transform: rotateX(-90deg) translateZ(210px);
+    }
+    .face_in{
+    position: absolute;
+    width: 106px;
+    height: 106px;
+    display: flex; /* add grid here if needed*/
+    box-sizing: border-box;
+    color: white;
+    }
+        </style>
+    </head>
+    <body id="body" style="font-family: fantasy; margin-top: 24px; display: flex; flex-direction: column; justify-content: flex-start; min-height: 100vh; background-color: white; overflow: hidden; align-items: center;">
+        <div class="screen" id="character_select_screen" style="width:420px; height: 280px; border: 1px solid; display: flex; flex-direction: column; margin: auto;">
+            <div id="character_profile" style="display: flex; flex-direction: row; width: 240px; height: 120px; border-bottom: black 1px solid;">
+                <div id="character_preview" style="margin: 18px 0px 0px 70px; border: 1px solid red; width: 170px; height: 102px; display: flex; flex-direction: row;">
+                    <div id="preview_picture" style="width: 90px; height: 102px; border: 1px solid black;">
+                        <div id="start_level_select" style="width: 58px; background-color: black; color: whitesmoke; text-align: center; border-radius: 7px; border: 3px groove grey; font-size: 12px; position: relative; top: 70px; left: 13px; display: none; flex-direction: column; cursor: pointer;">START</div>
+                    </div>
+                    <div id="preview_name" style="font-size: 9px;"></div>
+                </div>
+            </div>
+            <div id="character_selection" style="width: 240px; height: 120px; border: 1px solid black; display: flex; flex-wrap: wrap;"></div>
+            <div id="back_to_selection" style="width: 244px; height: 24px; border: 1px solid black; text-align: center; color: white; background-color: black; margin: auto; cursor: pointer; display: none; flex-direction: column;">BACK TO SELECTION</div>
+        </div>
+        <div class="screen" id="level_select_screen" style="width: 420px; height: 280px; border: 1px solid black; margin: auto; display: none; flex-direction: column;">
+            <div id="level_holder" style="width: 238px; height: 239px; border: red 1px solid; overflow-y: scroll;">LEVEL SELECT
+                <div id="selected_party" style="font-size: 13px;"></div>
+            </div>
+            <div id="back_to_character_select" style="font-size: 12px; width: 42px; background-color: black; color: white; text-align: center; cursor: pointer;">BACK</div>
+        </div>
+        <div class="screen" id="level_details_screen" style="width: 420px; height: 280px; display: none; flex-direction: column; border: 1px solid black; margin:auto;">
+            <div id="level_detail_name" style="margin: 3px 0px 3px 6px; position: absolute; font-size: 11px;"></div>
+            <div id="level_details_options" style="width: 240px; height: 215px; border: 1px solid blue; display: flex; flex-direction: row;">
+                <div id="details" style="width: 120px; height: 120px; border: 1px solid green; margin-top: 93px; overflow-y: scroll; text-align: center; background-color: black; color: white">
+                    <div id="level_details_enemies" style="border-bottom: 3px outset grey;">ENEMIES</div>
+                    <div id="level_details_shops" style="border-bottom: 3px outset grey;">SHOPS</div>
+                    <div id="level_details_treasures" style="border-bottom: 3px outset grey;">TREASURES</div>
+                    <div id="level_details_materials" style="border-bottom: 3px outset grey;">MATERIALS</div>
+                    <div id="level_details_residents" style="border-bottom: 3px outset grey;">RESIDENTS</div>
+                    <div id="level_details_landmarks" style="border-bottom: 3px outset grey;">LANDMARKS</div>
+                </div>
+                <div id="detailed_enemies" style="width: 120px; height: 213px; border: 1px solid black; display: none; flex-direction: column;">
+                    <div style="font-size: 12px;">ENEMIES</div>
+                    <div id="enemy_details_box" style="width: 120px; border: 1px solid black; overflow-y: scroll; height: 200px;"></div>
+                </div>
+                <div id="detailed_shops" style="width: 120px; height: 213px; border: 1px solid black; display: none; flex-direction: column;">
+                    <div style="font-size: 12px;">SHOPS</div>
+                    <div id="shops_details_box" style="width: 120px; border: 1px solid black; overflow-y: scroll; height: 200px;"></div>
+                </div>
+                <div id="detailed_chest" style="width: 120px; height: 213px; border: 1px solid black; display: none; flex-direction: column;">
+                    <div style="font-size: 12px;">CHEST</div>
+                    <div id="chest_details_box" style="width: 120px; border: 1px solid black; overflow-y: scroll; height: 200px;"></div>
+                </div>
+                <div id="detailed_materials" style="width: 120px; height: 213px; border: 1px solid black; display: none; flex-direction: column;">
+                    <div style="font-size: 12px;">MATERIALS</div>
+                    <div id="material_details_box" style="width: 120px; border: 1px solid black; overflow-y: scroll; height: 200px;"></div>
+                </div>
+                <div id="detailed_residents" style="width: 120px; height: 213px; border: 1px solid black; display: none; flex-direction: column;">
+                    <div style="font-size: 12px;">RESIDENTS</div>
+                    <div id="residents_details_box" style="width: 120px; border: 1px solid black; overflow-y: scroll; height: 200px;"></div>
+                </div>
+                <div id="detailed_landmarks" style="width: 120px; height: 213px; border: 1px solid black; display: flex; flex-direction: column;">
+                    <div style="font-size: 12px;">LANDMARKS</div>
+                    <div id="landmarks_details_box" style="width: 120px; border: 1px solid black; overflow-y: scroll; height: 200px;"></div>
+                </div>
+            </div>
+            <div id="back_to_level_select" style="background-color: black; color: whitesmoke; padding-left: 7px; margin-top: 6px; cursor: pointer;">BACK TO LEVEL SELECT</div>
+            <div id="start_level" style="background-color: black; color: whitesmoke; padding-left: 7px; margin-top: 6px; cursor: pointer;">START LEVEL</div>
+        </div>
+        <div id="map" style="width: 420px; height: 280px; border: black 1px solid; margin: auto; display: none; flex-direction: column;"></div>
+        <div class="screen" id="world_holder_0" style="height: 580px; width: 420px; margin-bottom: 0px; display:none; background-color: #222; flex-direction: column;">
+            <div class="cube-container" style=" background-image: url(./images/Mountains5.png); background-size: 50%; background-position-y: -50px; background-repeat:repeat-x">
+                <div class="cube" id="cube" style="background-color: rgba(255, 255, 255, 0);">
+                    <div class="face front" style=" width: 1520px; display: none;"></div>
+                    <div class="face back" style="background-color: rgba(226, 43, 43, 0); width: 780px;">
+                        <div id="mountain_range_1" style="width: 1780px; height: 240px; border: 1px solid transparent; position: absolute; top: 189px; right: 120px; background-image: url(./images/mountain_grey-1.png.png); background-position: bottom; background-size: 380px; background-repeat: repeat-x; transform: translateZ(246px);"></div>
+                        <div id="mountain_range_2" style="width: 1780px; height: 200px; border: 1px solid transparent; position: absolute; top: 189px; right: 20px; background-image: url(./images/mountain_grey-1.png.png); background-position: bottom; background-size: 240px; background-repeat: repeat-x; transform: translateZ(200px);"></div>
+                        <div id="mountain_range_2" style="width: 1780px; height: 120px; border: 1px solid transparent; position: absolute; top: 271px; right: 20px; background-image: url(./images/pine_tree.png); background-position: bottom; background-size: 80px; background-repeat: repeat-x; transform: translateZ(150px);"></div>
+                        <div id="mountain_range_2" style="width: 1780px; height: 120px; border: 1px solid transparent; position: absolute; top: 271px; right: 53px; background-image: url(./images/pine_tree.png); background-position: bottom; background-size: 80px; background-repeat: repeat-x; transform: translateZ(140px);"></div>
+                        <div id="mountain_range_2" style="width: 1780px; height: 120px; border: 1px solid transparent; position: absolute; top: 271px; right: 70px; background-image: url(./images/pine_tree.png); background-position: bottom; background-size: 80px; background-repeat: repeat-x; transform: translateZ(130px);"></div>
+                        <div id="tent" style="width: 96px; height: 96px; border: 1px solid rgba(255, 255, 255, 0); position: absolute; top: 323px; left: 30px; background-image: url(./images/tent.png); background-repeat: no-repeat; background-size: contain; background-position: bottom;"></div>
+                    </div>
+                    <div class="face right" style="display: none;"></div>
+                    <div class="face left" style="display: none;"></div>
+                    <div class="face top" style="display: none;"></div>
+                    <div class="face bottom" style="background-color: rgba(255, 255, 255, 0.4); width: 1780px; background-image: url(./images/World_A2-1.png.png);">
+                        <div style="width: 1780px; height: 420px; border: 1px solid transparent; position:relative; top: 420px; background-color: rgba(255, 255, 255, 0.4); background-image: url(./images/World_A2-1.png.png);"></div>
+                    </div>
+                    <div id="player_rig" style="position: absolute; width: 420px; height: 280px; pointer-events: none; perspective: preserve-3d;">
+                        <div id="player_object" style="position:absolute; width: 64px; height: 64px; transform-style: preserve-3d; background-image: url(./character_sprites/spr_character_idle_00.gif); background-size: contain; background-position: bottom; background-repeat: no-repeat; top: 356px;">
+                            <div id="player_bubble" style="position: absolute; width: 24px; height: 24px; border: 1px solid transparent; top: -32px; left: 18px; display: none; flex-direction: column; align-items: center; text-align: center; border-radius: 24px; background-color: ghostwhite; justify-content: center; color: red;">!</div>
+                            <div id="player_position_display" style="position: absolute; width: 64px; height: 24px; border: white 1px solid; top: -24px; color: yellow; font-size: 12px; display: none;"></div>
+                        </div>
+                    </div>
+                    <div id="npc_rig_01" style="position: absolute; inset: 0; transform-style: preserve-3d;">
+                        <div id="npc_00" style="position: absolute; width: 64px; height: 64px; transform-style: preserve-3d; border: 1px solid transparent; top: 354px; left: 740px; cursor: pointer; background-image: url('./npc_sprites/npc_00.png'); background-position: bottom; background-size: contain; background-repeat: no-repeat; transform: translateZ(-12px);">
+                            <div id="alert_box" style="position: absolute; width: 16px; height: 16px; border-radius: 32px; background-color: white; top: -18px; left: 24px; text-align: center; display: none; flex-direction: column; box-shadow: 0px 0px 10px 7px rgba(0, 0, 0, 0.420);">!</div>
+                        </div>
+                    </div>
+                    <div id="chest_rig_00" style="position: absolute; inset: 0; transform-style: preserve-3d;">
+                        <div id="chest_00" style="position: absolute; width: 64px; height: 64px; transform-style: preserve-3d; border: solid 1px transparent; top: 354px; left: 940px; background-position: bottom; background-repeat: no-repeat; background-size: 42px; transform: translateZ(-12px); cursor: pointer;">
+                            <div id="alert_box_chest" style="position: absolute; width: 16px; height: 16px; border-radius: 32px; background-color: white; top: 7px; left: 24px; text-align: center; display: none; flex-direction: column; box-shadow: 0px 0px 10px 7px rgba(0, 0, 0, 0.420); font-size: 12px; cursor: pointer;">!</div>
+                        </div>
+                    </div>
+                    <div id="potion_test" style="position: absolute; inset: 0; transform-style: preserve-3d;">
+                        <div id="potion_00" style="position: absolute; width: 32px; height: 32px; transform-style: preserve-3d; border: 1px solid white; top: 354px; left: 540px; transform: translateZ(-12px); cursor: pointer; background-image: url(./icon_images/icon_00.png); background-position: center; background-size: contain;"></div>
+                    </div>
+                    <div id="hq_rig" style="position: absolute; inset: 0; transform-style: preserve-3d;">
+                        <div id="hq" style="position: absolute; width: 200px; height: 200px; transform-style: preserve-3d; border: 1px solid transparent; top: 214px; left: 200px; background-image: url(./images/hot_air_ballon.png); background-size: contain; background-position: bottom; background-repeat: no-repeat;"></div>
+                    </div>
+                    <div id="enemy_rig" style="position: absolute; inset: 0; transform-style: preserve-3d; perspective: 800px; transform: translateZ(0);">
+                        <div id="enemy_0" style="position: absolute; width: 96px; height: 96px; transform-style: preserve-3d; border: 1px solid transparent; top: 323px; left: 1200px; background-size: contain; background-position: bottom; background-repeat: no-repeat; background-image: url(./mon_sprites/mon_00_walk.gif);"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="dialogue_box" style="width: 420px; height: 280px; position: absolute; border: 1px solid red; margin:auto; top: 24px; display: none; flex-direction: column;">
+                <div id="character_portait_holder" style="width: 420px; height: 160px; border: 1px solid blue; display: flex; flex-direction: row; justify-content: space-between;">
+                <div id="player_character" style="width: 160px; height: 160px; border: 1px solid white; background-position: bottom; background-size: contain; background-repeat: no-repeat;"></div>
+                <div id="npc_character" style="width: 160px; height: 160px; border: 1px solid white;"></div>
+            </div>
+            <div id="dialogue_display" style="width: 420px; height: 160px; border: 1px transparent solid; background-color: black; color: white; display: flex; flex-direction: column;  ">
+                <div id="npc_name" style="width: 160px; height: 18px; border-bottom: 1px solid white; position: relative; left: 258px; font-size: 15px; text-align: left; top: 4px; color: gold;"></div>
+                <div id="npc_text" style="width: 410px; height: 86px; border: 1px solid transparent; margin: 7px 0px 0px 4px;"></div>
+                <div id="text_press_y" style="position: absolute; width: 16px; height: 16px; border-radius: 16px; border: white 1px inset; display: flex; flex-direction: column; text-align: center; background-color: #222; color: white; font-size: 8px; justify-content: center; top: 254px; left: 394px; cursor: pointer;">!</div>
+            </div>
+        </div>
+        <div id="inventory_display" style="width:420px; height:120px; border: 1px solid black; display: none; flex-direction: column; color: white; position: absolute; background-color: #222;">
+                Inventory:
+            <div id="inventory_holder" style="width:238px; height: 118px; display: flex; flex-wrap: wrap;">
+                
+            </div>
+        </div>
+        <div id="message_box" style="width: 420px; height: 172px; position: absolute; background-color: #222222ea; top: 80px; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: white;">
+            <div id="message_box_exit" style="position: absolute; top: 0px; right: 10px; cursor: pointer;">EXIT</div>
+            <div id="message_box_header" style="color: white;"></div>
+            <div id="message_box_image" style="width: 96px; height: 96px; border: yellow 1px solid; border-radius: 7px; background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
+            <div id="messge_box_desc" style="width: 240px; height: 64px; border: 1px solid transparent; text-align: left;"></div>
+        </div>
+        <div id="leave_level_display" style="width:420px; height: 72px; display: none; flex-direction: column; background-color: #222222ea; position: absolute; border: 1px solid transparent; border-radius: 0px; top: 120px;  justify-content: center; align-items: center; color: white;">
+            <div style="color: white;">EXIT LEVEL?</div>
+            <div id="leave_level_yes" style="cursor: pointer; display: flex; flex-direction: row; margin-bottom: 4px;">
+                Yes
+            </div>
+        </div>
+        <div id="battler" style="position: absolute; width: 420px; height: 280px; border: 1px solid transparent; display: none; flex-direction: column; justify-content: space-between; opacity: 1;">
+            <div id="enemy_hud_holder" style="width: 418px; height: 32px; border: 1px solid transparent; display: flex; flex-direction: row; justify-content: flex-end;">
+                <div id="enemy_hud" style="height: 32px; width: 240px; background-color: azure; border: 3px skyblue outset; border-radius: 7px; display: flex; flex-direction: column;">
+                    <div id="enemy_status" style="color: black; font-size: 9px; margin: 2px; display: flex; flex-direction: row;">
+                        <div id="battler_enemy_name">MON: </div>
+                        <div id="battler_enemy_health"></div>
+                    </div>
+                    <div id="battler_enemy_def" style="width: 227px; height: 8px; border-radius: 12px; border: inset crimson 3px; margin-left: 4px; background-color: #222; overflow: hidden;"></div>
+                </div>
+            </div>
+            <div id="player_hud_holder" style="width: 418px; height: 32px; border: 1px solid transparent; display: flex; flex-direction: row; justify-content: flex-start;">
+                <div id="player_hud" style="height: 32px; width: 240px; background-color: azure; border: 3px skyblue outset; border-radius: 7px; display: flex; flex-direction: column;">
+                    <div id="player_status" style="color: black; font-size: 9px; margin: 2px; display: flex; flex-direction: row;">
+                        <div id="battler_player_name"></div>
+                        <div id="battler_player_health"></div>
+                    </div>
+                    <div id="player_def" style="width: 227px; height: 8px; border-radius: 12px; border: inset goldenrod 3px; margin-left: 4px; background-color: #222;"></div>
+                </div>
+            </div>
+        </div>
+    <div id="controller" style="  height: 123px; width: 420px; margin-top: 42px; color: white; text-align: center; display: flex; flex-direction: column; justify-content: center; position: relative;">GAME GAL
+        <div id="camera" style="display: flex; margin:auto;">
+            <button id="camera_left" style="background-color: black; color: white;"> [L] </button>
+            <div id="navigation" style=" width: 320px; height: 120px; background-image: linear-gradient(white, skyblue); display: flex; flex-direction: column;">
+                <div style="height: 24px; width: 100%; border: 1px solid black"></div>
+                <div style="height: 93px; width: 100%; border: 1px solid red; display: flex; flex-direction: row;">
+                    <div id="game_controller" style="width: 120px; height: 92px; border: 1px solid black; display: flex; flex-direction: column;">
+                        <div id="game_up" style="width: 32px; height: 32px; background-color: #222; color: black; margin-left: 44px; display: flex; flex-direction: column; color: white; text-align: center; align-items: center; justify-content: center; font-size: 26px; cursor: pointer;">^</div>
+                        <div style="width: 96px; height: 32px; display: flex; flex-direction: row; margin-left: 12px;">
+                            <div id="game_left" style="width: 32px; height: 32px; background-color: #222; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 20px; cursor: pointer;">&#60</div>
+                            <div style="width: 32px; height: 32px; background-color: #222; border-radius: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 20px;">
+                                <div style="width: 16px; height: 16px; border-radius: 16px; border: white 1px solid;"></div>
+                            </div>
+                            <div id="game_right" style="width: 32px; height: 32px; background-color: #222;display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 20px; cursor: pointer;">&#62</div>
+                        </div>
+                        <div id="game_down" style="width: 32px; height: 32px; background-color: #222; color: black; margin-left: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 21px; color: white; cursor: pointer;">v</div>
+                    </div>
+                    <div style="width: 75px; height: 92px; border: 1px violet solid; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <div id="game_button_start" style="width: 64px; height: 32px; background-color: #222; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 6px; cursor: pointer;">MENU</div>
+                    </div>
+                    <div id="game_buttons" style="width: 120px; height: 92px; border: 1px black solid; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div style="width: 78px; height: 32px; justify-content: space-between; display: flex; flex-direction: row; border: 3px rgb(113, 174, 199) solid; border-radius: 24px; transform: rotate(-21deg); background-image: linear-gradient(rgba(102, 158, 180), rgb(97, 97, 97));">
+                            <div id="game_button_x" style="width: 32px; height: 32px; border-radius: 32px; background-color: #222; text-align: center; display: flex; flex-direction: column; justify-content: center; transform: rotate(21deg); cursor: pointer;">X</div>
+                            <div id="game_button_y" style="width: 32px; height: 32px; border-radius: 32px; background-color: #222; text-align: center; display: flex; flex-direction: column; justify-content: center; transform: rotate(21deg); cursor: pointer;">Y</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="battle_controller" style="width: 320px; height: 124px; display: none; flex-direction: row;">
+                <div style="width: 120px; height: 96px;"></div>
+            </div>
+            <button id="camera_right" style="background-color: black; color: white;"> [R] </button>
+        </div>
+    </div>
+        </div>
+        
+        <div id="game_screen" style="display: none; flex-direction: column;">
+            <div style="width:240px;height: 240px;border:1px solid black;">
+                <div id="mon_display_box" style="width: 120px; height: 120px; border: 1px solid red; position: relative; top: 42px; left: 52px; font-size: 11px;"></div>
+                <div style="display: flex; flex-direction: column; width: 240px; height: 64px; border: blue 1px solid; position: relative; top: 53px; font-size: 12px;">
+                    <div id="level"></div>
+                    <div id="exp"></div>
+                    <div id="gil"></div>
+                    <div id="display_defeated"></div>
+                </div>
+            </div>
+            <div style="width:240px; height: 120px;border: 1px solid black; display: flex; flex-direction: column;">
+                <div id="next_btn" style="background-color: black;color: white; height:24px; cursor: pointer;">NEXT</div>
+                <div id="stat_holder" style="display: flex; flex-direction: row; width: 240px; height: 64px; border: 1px solid black;">
+                    <div id="hud_box" style="width:120px; height: 64px; font-size: 12px;">
+                        HP:<br>STM:<br>MP:
+                    </div>
+                </div>
+            </div>
+            <div style="width: 240px; height: 120px; border: 1px solid black; display: flex; flex-direction: column;">
+                Store:
+                <div id="item_holder" style="width:238px; height: 118px; display: flex; flex-wrap: wrap;"></div>
+            </div>
+        </div>
+    </body>
+</html>
+<script>
+    var body = document.getElementById('body');
+    var character_select_screen = document.getElementById('character_select_screen');
+    var character_selection = document.getElementById('character_selection');
+    var character_equipment = document.createElement('div');
+    Object.assign(character_equipment.style,{ width: '96px', height: '96px', border: 'red 1px solid', display: 'none', flexDirection:'column'});
+    character_selection.appendChild(character_equipment);
+    var preview_name = document.getElementById('preview_name');
+    var back_to_character_select = document.getElementById('back_to_character_select');
+    var start_level_select = document.getElementById('start_level_select');
+    var selected_party = document.getElementById('selected_party');
+    elementHover(start_level_select,"yellow","white");
+    var back_to_selection = document.getElementById('back_to_selection');
+    elementHover(back_to_selection,"yellow","white");
+    var detailed_shops = document.getElementById('detailed_shops');
+    var shops_details_box = document.getElementById('shops_details_box');
+    var detailed_chest = document.getElementById('detailed_chest');
+    var chest_details_box = document.getElementById('chest_details_box');
+    var detailed_materials = document.getElementById('detailed_materials');
+    var material_details_box = document.getElementById('material_details_box');
+    var detailed_residents = document.getElementById('detailed_residents');
+    var residents_details_box = document.getElementById('residents_details_box');
+    var detailed_landmarks = document.getElementById('detailed_landmarks');
+    var landmarks_details_box = document.getElementById('landmarks_details_box');
+    var back_to_level_select = document.getElementById('back_to_level_select');
+    elementHover(back_to_level_select,'yellow','white');
+    var map = document.getElementById('map');
+    var world_holder_0 = document.getElementById('world_holder_0');
+    var controller = document.getElementById('controller');
+    var navigation = document.getElementById('navigation');
+    var game_button_start = document.getElementById('game_button_start');
+    elementHover(game_button_start,'yellow','white');
+    var message_box = document.getElementById('message_box');
+    var message_box_exit = document.getElementById('message_box_exit');
+    onHover(message_box_exit,'yellow','white');
+    var message_box_header = document.getElementById('message_box_header');
+    var message_box_image = document.getElementById('message_box_image');
+    var message_box_desc = document.getElementById('message_box_desc');
+    message_box_exit.onclick = function(){
+        message_box.style.display = 'none';
+    }
+    var chest_rig_00 = document.getElementById('chest_rig_00');
+    var chest_00 = document.getElementById('chest_00');
+    var alert_box_chest = document.getElementById('alert_box_chest');
+    var enemy_0 = document.getElementById('enemy_0');
+    var player_bubble = document.getElementById('player_bubble');
+    var battler_enemy_name = document.getElementById('battler_enemy_name');
+    var battler_enemy_health = document.getElementById('battler_enemy_health');
+    var battler_player_name = document.getElementById('battler_player_name');
+    var battler_player_health = document.getElementById('battler_player_health');
+    var battler_enemy_def = document.getElementById('battler_enemy_def');
+    //player stats
+    var player =[
+        {id: 0, name:"Tahdah",level:1,current_exp:0,to_next_lvl:10,GIL:0,DEF:14,RES:3,ATK:7,EVA:0,spATK:0,DEX:0,spDEF:0},
+        {id: 1, name:"Tildi",level:1,current_exp:0,to_next_lvl:10,GIL:0,DEF:0,RES:0,ATK:0,EVA:0,spATK:0,DEX:0,spDEF:0},
+        {id: 2, name:"Dani",level:1,current_exp:0,to_next_lvl:10,GIL:0,DEF:0,RES:0,ATK:0,EVA:0,spATK:0,DEX:0,spDEF:0},
+        {id: 3, name:"Adelaide",level:1,current_exp:0,to_next_lvl:10,GIL:0,DEF:0,RES:0,ATK:0,EVA:0,spATK:0,DEX:0,spDEF:0},
+        {id: 4, name:"Veda",level:1,current_exp:0,to_next_lvl:10,GIL:0,DEF:0,RES:0,ATK:0,EVA:0,spATK:0,DEX:0,spDEF:0},
+        {id: 5, name:"Destra",level:1,current_exp:0,to_next_lvl:10,GIL:0,DEF:0,RES:0,ATK:0,EVA:0,spATK:0,DEX:0,spDEF:0},
+        {id: 6, name:"Sophia",level:1,current_exp:0,to_next_lvl:10,GIL:0,DEF:0,RES:0,ATK:0,EVA:0,spATK:0,DEX:0,spDEF:0},
+        {id: 7, name:"Ol",level:1,current_exp:0,to_next_lvl:10,GIL:0,DEF:0,RES:0,ATK:0,EVA:0,spATK:0,DEX:0,spDEF:0}
+    ];
+    //monster stats
+    var mon =[
+        {id: 0, name:'Black Widow', HP:28, POW:10, PD:0, MD:28, Weak: 'None', GIL:8, EXP:30, Resist:'None', level_id: 0},
+        {id: 1, name:'Crazy Horse', HP:64, POW:10, PD:2, MD:40, Weak: 'None', GIL:15, EXP:63, Resist:'None', level_id: 0},
+        {id: 2, name:'Gigas Worm', HP:56, POW:17, PD:8, MD:40, Weak: 'Fire', GIL:15, EXP:63, Resist:'None', level_id: 0},
+        {id: 3, name:'Slime', HP:8, POW:4, PD:4, MD:16, Weak:'None', GIL:6, EXP:6, Resist:'None', level_id: 0},
+        {id: 4, name:'Goblin Guard', HP:16, POW:8, PD:6, MD:23, Weak:'None', GIL:18, EXP:18, Resist:'None', level_id: 0},
+        {id: 5, name:'Skeleton', HP:10, POW:10, PD:0, MD:17, Weak:'Fire', GIL:3, EXP:9, Resist:'None', level_id: 0},
+        {id: 6, name:'Wolf', HP:20, POW:8, PD:0, MD:28, Weak:'None', GIL:6, EXP:24, Resist:'None', level_id: 0}
+    ];
+    //Temple of Chaos
+    var boss = [
+        {id: 0, name:'Garland', HP:106, POW:15, PD:10, MD:64, Weak: 'None', GIL:250, EXP:130, Resist:'None'}
+    ];
+    //shops
+    var shops = [
+        {id: 0, name:'White Shop', level_id: 0},
+        {id: 1, name:'Black Shop', level_id: 0},
+        {id: 2, name:'Weapon Shop', level_id: 0},
+        {id: 3, name:'Armor Shop', level_id: 0},
+        {id: 4, name:'Item Shop', level_id: 0},
+    ];
+    //items
+    var items = [
+        {id: 0, name:'Potion', cost: 60, desc: 'Restores a characters HP by a little.', type: 'item'},
+        {id: 1, name:'Antidote', cost: 75, desc: 'Cures Poison.', type: 'item'},
+        {id: 2, name:'Sleeping Bag', cost: 75, desc: 'Restores a little HP and creates checkpoint.', type: 'item'},
+        {id: 3, name:'Tent', cost: 250, desc: 'Restores a lot of HP and creates a checkpoint.', type: 'item'},
+        {id: 4, name:'Glass Jar', cost: 25, desc: 'Store many things in this unbreakable jar.', type: 'item'},
+    ];
+    //spells
+    var spells = [
+        {id: 0, name:'Cure', cost: 100, desc: 'Restores 16-32 HP to one character.', type: 'spell'},
+        {id: 1, name:'Dia', cost: 100, desc: 'Inflicts 20-80 damage to undead foes.', type: 'spell'},
+        {id: 2, name:'Shield', cost: 100, desc: 'Raise Defense 8 points.', type: 'spell'},
+        {id: 3, name:'Blink', cost: 100, desc: 'Raise Evasion by 80 points.', type: 'spell'},
+        {id: 4, name:'Fire', cost: 100, desc: 'Inflicts 10-40 fire damage.', type: 'spell'},
+        {id: 5, name:'Sleep', cost: 100, desc: 'Puts foes to sleep.', type: 'spell'},
+        {id: 6, name:'Focus', cost: 100, desc: 'Lowers foes Evasion by 10 points.', type: 'spell'},
+        {id: 7, name:'Bolt', cost: 100, desc: 'Inflict 10-40 lightning damage.', type: 'spell'},
+    ];
+         //item shop inventory
+    var item_shop_inventory = [
+        //1st shop
+        {shop_id: 4, inventory_id: 0},
+        {shop_id: 4, inventory_id: 1},
+        {shop_id: 4, inventory_id: 2},
+    ];
+    //spell shop inventory
+    var spell_shop_inventory = [
+        {shop_id: 0, spell_id: 0},
+        {shop_id: 0, spell_id: 1},
+        {shop_id: 0, spell_id: 2},
+        {shop_id: 0, spell_id: 3},
+        {shop_id: 1, spell_id: 4},
+        {shop_id: 1, spell_id: 5},
+        {shop_id: 1, spell_id: 6},
+        {shop_id: 1, spell_id: 7},
+    ];
+    //weapons
+    var weapons = [
+        {id: 0, name: 'Nunchaku', cost: 10, ATK: 12, ACC: 0, desc: 'Wooden Nunchaku.', type: 'weapon'},
+        {id: 1, name: 'Knife', cost: 5, ATK: 5, ACC: 10, desc: 'A small knife.', type: 'weapon'},
+        {id: 2, name: 'Staff', cost: 5, ATK: 6, ACC: 0, desc: 'A wooden staff.', type: 'weapon'},
+        {id: 3, name: 'Rapier', cost: 10, ATK: 9, ACC: 5, desc: 'Sword with a slender blade.', type: 'weapon'},
+        {id: 4, name: 'Hammer', cost: 10, ATK: 9, ACC: 0, desc: 'A hammer made for combat.', type: 'weapon'},
+        {id: 5, name: 'Copper Pan', cost: 10, ATK: 7, ACC: 7, desc: 'A copper frying pan', type: 'weapon'},
+
+    ];
+        //weapon shop inventory
+    var weapon_shop_inventory = [
+        {shop_id: 2, weapon_id: 0},
+        {shop_id: 2, weapon_id: 1},
+        {shop_id: 2, weapon_id: 2},
+        {shop_id: 2, weapon_id: 3},
+        {shop_id: 2, weapon_id: 4},
+    ];
+    //armor
+    var armors = [
+        {id: 0, name: 'Shirt', cost: 10, DEF: 1, EVA: -2, desc: 'A shirt made of cotton.', type: 'torso_gear'},
+        {id: 1, name: 'Leathor Armor', cost: 50, DEF: 4, EVA: -8, desc: 'Plain armor made of leather.', type: 'torso_gear'},
+        {id: 2, name: 'Chain Mail', cost: 80, DEF: 15, EVA: -15, desc: 'Mail made with steel rings.', type: 'torso_gear'},
+        {id: 3, name: 'Leather Cap', cost: 80, DEF: 1, EVA: -1, desc: 'Cap made of leather.', type: 'head_gear'},
+    ];
+    //armor shop inventory
+    var armor_shop_inventory = [
+        {shop_id: 3, armor_id: 0},
+        {shop_id: 3, armor_id: 1},
+        {shop_id: 3, armor_id: 2},
+    ];
+    //treasure chest
+    var chests = [
+        {id: 0, object: 'Sleeping Bag', level_id: 0, found: false, arr: items, element: chest_00},
+        {id: 1, object: 'Leather Cap', level_id: 0, found: false, arr: armors, element: null},
+        {id: 2, object: 'Potion', level_id: 0, found: false, arr: items, element: null},
+        {id: 3, object: 'Tent', level_id: 0, found: false, arr: items, element: null},
+    ];
+    //materials
+    var materials = [
+        {id: 0, name: 'Ginger root', desc: 'Used as a spice and medicine.', type: 'material'},
+        {id: 1, name: 'Mint leaves', desc: 'Aromatic herbs used for cooking and drinks.', type: 'material'},
+        {id: 2, name: 'Honey', desc: 'Concentrated sugar-water made by bees.', type: 'material'},
+        {id: 3, name: 'Fresh Water', desc: 'Natural fresh water.', type: 'material'},
+    ];
+    //materials in levels
+    var material_location = [
+        {level_id: 0, material_id: 0},
+        {level_id: 0, material_id: 1},
+        {level_id: 0, material_id: 2},
+        {level_id: 0, material_id: 3},
+    ]; 
+    //level residents
+    var residents = [
+        {id: 0, name: 'Day Dreamer', found: false, level_id: 0, desc: 'A girl that dreams of better things.'},
+        {id: 1, name: 'Town Guard', found: false, level_id: 0, desc: 'These guards keep peace in town.'},
+        {id: 2, name: 'Town Guard', found: false, level_id: 0, desc: 'Created by the Weapon Smith and Armor Jane.'}, 
+        {id: 3, name: 'Forest Woodsman', found: false, level_id: 0, desc: 'Traveled from the Pink Forest and lost his way.'},
+        {id: 4, name: 'Old Man', found: false, level_id: 0, desc: 'He has been around for a long time.'},
+        {id: 5, name: 'Old Gal', found: false, level_id: 0, desc: 'She has been around for two minutes longer than her twin brother.'},
+        {id: 6, name: 'Nuwa', found: false, level_id: 0, desc: 'I am here to help when ever I can.'},
+        {id: 7, name: 'Inn Keeper', found: false, level_id: 0, desc: 'Created the inn because she wanted to help travelers rest.'},
+        {id: 8, name: 'White Witch', found: false, level_id: 0, desc: 'She likes to read romance novels.'},
+        {id: 9, name: 'Black Wizard', found: false, level_id: 0, desc: 'He does not like to practice magic though knows powerful spells.'},
+        {id: 10, name: 'Alchemist', found: false, level_id: 0, desc: 'Likes the taste of honey.'},
+        {id: 11, name: 'Weapon Smith', found: false, level_id: 0, desc: 'Used to be a weapon then started to make them.'},
+        {id: 12, name: 'Armor Jane',  found: false,level_id: 0, desc: 'It is said she has impenetrable skin.'},
+    ];
+    var landmarks = [
+        {id: 0, name: 'Red Lagoon', found: false, level_id: 0},
+        {id: 1, name: 'Hollow Woods', found: false, level_id: 0},
+        {id: 2, name: 'Sun Village', found: false, level_id: 0},
+        {id: 3, name: 'Tiled Plains', found: false, level_id: 0},
+        {id: 4, name: 'Pillar Town', found: false, level_id: 0},
+        {id: 5, name: 'Crimson Gate', found: false, level_id: 0},
+    ];
+        //player equipment
+    var player_equipment = [
+        {player_id: 0, weapon_id: 5, head_gear: null, torso_gear: null, arm_gear: null, foot_wear: null, accessory: null},
+        {player_id: 1, weapon_id: null, head_gear: null, torso_gear: null, arm_gear: null, foot_wear: null, accessory: null},
+        {player_id: 2, weapon_id: null, head_gear: null, torso_gear: null, arm_gear: null, foot_wear: null, accessory: null},
+        {player_id: 3, weapon_id: null, head_gear: null, torso_gear: null, arm_gear: null, foot_wear: null, accessory: null},
+        {player_id: 4, weapon_id: null, head_gear: null, torso_gear: null, arm_gear: null, foot_wear: null, accessory: null},
+        {player_id: 5, weapon_id: null, head_gear: null, torso_gear: null, arm_gear: null, foot_wear: null, accessory: null},
+        {player_id: 6, weapon_id: null, head_gear: null, torso_gear: null, arm_gear: null, foot_wear: null, accessory: null},
+        {player_id: 7, weapon_id: null, head_gear: null, torso_gear: null, arm_gear: null, foot_wear: null, accessory: null},
+    ];
+    //character selection
+    //reference to all boxes
+    const player_boxes = [];
+    const party = [];
+    var start_level_id = null;
+    var character_equipment_arr = [];
+    var enemy_details_box = document.getElementById('enemy_details_box');
+    var enemy_details_arr = [];
+    var shops_details_arr = [];
+    var chest_details_arr = [];
+    var material_details_arr = [];
+    var residents_details_arr = [];
+    var landmarks_details_arr = [];
+    player.forEach(play=>{
+        var player_box = document.createElement('div');
+        character_selection.appendChild(player_box);
+        Object.assign(player_box.style,{width: "39px", height: "42px", border: "1px solid black", margin: "8px 0px 4px 12px", display: "flex", flexDirection: "column", cursor: "pointer"});
+        //profile picture
+        var player_profile = document.createElement('div');
+        player_box.appendChild(player_profile);
+        Object.assign(player_profile.style,{width: "32px", height: "32px", border: "1px solid black", marginLeft: "3px"});
+        //player name
+        var player_name = document.createElement('div');
+        player_box.appendChild(player_name);
+        player_name.innerHTML = play.name;
+        Object.assign(player_name.style,{fontSize: "11px", width: "39px", textAlign: "center"});
+        //hover
+        player_box.addEventListener('mouseover',()=>{
+            preview_name.innerHTML = play.name+"<br>LEVEL :"+play.level+"<br>DEF: "+play.DEF+"<br>RES: "+play.RES+"<br>ATK: "+play.ATK+"<br>EVA: "+play.EVA+"<br>spATK: "+play.spATK+"<br>DEX: "+play.DEX+"<br>spATK: "+play.spATK;
+        });
+        //player box on click
+        player_box.onclick = function(){
+            start_level_select.style.display = "flex";
+            player_boxes.forEach(box=>{
+                box.style.display = "none";
+                back_to_selection.style.display = "flex";
+                //add character to party
+            });
+            party.push(play);
+            localStorage.setItem("party",JSON.stringify(party));
+            console.log(party.map(p => p.name));
+            player_box.style.display = "flex";
+            player_box.style.borderColor = "blue";
+            //get player equipment
+            getEquipment(play.id);
+        }
+        //back_to_selection on click
+        back_to_selection.onclick = function(){
+            party.length = 0;
+            localStorage.setItem("party",JSON.stringify(party));
+            character_equipment.style.display = 'none';
+            start_level_select.style.display = "none";
+            player_boxes.forEach(box=>{
+                box.style.display = "flex";
+                box.style.borderColor = "black";
+                back_to_selection.style.display = "none";
+            });
+            // hideEquipment();
+        }
+        player_boxes.push(player_box);
+    });
+    start_level_select.onclick = function(){
+        showScreen("level_select_screen");
+        selected_party.innerHTML = party[0].name;
+    }
+    back_to_character_select.onclick = function(){
+        party.length = 0;
+        localStorage.setItem("party",JSON.stringify(party));
+        showScreen("character_select_screen");
+    }
+    //level select
+    var level_select_screen = document.getElementById('level_select_screen');
+    var level_holder = document.getElementById('level_holder');
+    var level_details_screen = document.getElementById('level_details_screen');
+    //details variables
+    var level_enemies = null;
+    var level_shops = null;
+    var level_items = null;
+    var level_weapons = null;
+    var level_equipment = null;
+    var level_spells = null;
+    var level_treasures = null;
+    var level_materials = null;
+    var level_residents = null;
+    var level_landmarks = null;
+    //level details options
+    var level_details_enemies = document.getElementById('level_details_enemies');
+    var level_details_shops = document.getElementById('level_details_shops');
+    var level_details_treasures = document.getElementById('level_details_treasures');
+    var level_details_materials = document.getElementById('level_details_materials');
+    var level_details_residents = document.getElementById('level_details_residents');
+    var level_details_landmarks = document.getElementById('level_details_landmarks');
+    //level details on hover
+    var level_details_arr = [level_details_enemies, level_details_shops,  level_details_treasures, level_details_materials, level_details_residents, level_details_landmarks];
+    level_details_arr.forEach(level_detail=>{
+        level_detail.style.cursor = "pointer";
+        elementHover(level_detail,"yellow","white");
+    });
+    //level details screen
+    var level_detail_name = document.getElementById('level_detail_name');
+    //levels
+    levels = [
+        {id: 0, name: 'Otor Un Dar', rank: 'F'},
+        {id: 1, name: 'Abandoned Facility', rank: 'E'},
+        {id: 2, name: 'Days Island', rank: 'D'},
+        {id: 3, name: 'Cliff Side', rank: 'C'},
+        {id: 4, name: 'Power Station', rank: 'B'},
+        {id: 5, name: 'Triden Tower', rank: 'A'},
+        {id: 6, name: 'Black Beach', rank: 'S'},
+        {id: 7, name: 'ToyLand', rank: 'S+'}
+    ];
+    //maps
+        var maps = [
+        {id: 0},
+        {id: 1},
+        {id: 2},
+        {id: 3},
+        {id: 4},
+        {id: 5},
+        {id: 6},
+        {id: 7},
+    ];
+    //for each level
+    levels.forEach(level=>{
+        var level_display = document.createElement('div');
+        level_holder.appendChild(level_display);
+        Object.assign(level_display.style,{width:"182px", height: "72px", border: "1px solid black", margin: "6px 0px 6px 12px", display: 'flex', flexDirection: 'column'});
+        //level name
+        var level_title = document.createElement('div');
+        level_display.appendChild(level_title);
+        level_title.innerHTML = level.name;
+        //level rank
+        var level_rank = document.createElement('div');
+        level_display.appendChild(level_rank);
+        level_rank.style.fontSize = "11px";
+        level_rank.innerHTML = "rank: ("+level.rank+")";
+        //level details
+        var level_details = document.createElement('div');
+        level_display.appendChild(level_details);
+        level_details.innerHTML = "DETAILS";
+        Object.assign(level_details.style,{ backgroundColor: "black", color: "white", textAlign: "center", width: "72px", fontSize: "12px", position: "relative", top: "26px", left: "110px", cursor: "pointer"});
+        elementHover(level_details,"yellow","white");
+        //level details on click
+        level_details.onclick = function(){
+            showScreen("level_details_screen");
+            level_detail_name.innerHTML = level.name+"<br>"+party[0].name;
+            getEnemies(level.id);
+            getShop(level.id);
+            getChest(level.id);
+            getMaterials(level.id);
+            getResidents(level.id);
+            getLandmarks(level.id);
+            start_level_id = level.id;
+        } 
+    });
+    back_to_level_select.onclick = function(){
+        showScreen("level_select_screen");
+        level_detail_name.innerHTML = "";
+        enemy_details_arr.length = 0;
+        start_level_id = null;
+    }
+    var detailed_arr = [detailed_enemies, detailed_shops, detailed_chest, detailed_materials, detailed_residents, detailed_landmarks];
+    //level details on click
+    function showDetails(element){
+        detailed_arr.forEach(detail=>{
+            detail.style.display = 'none';
+        });
+        element.style.display = 'flex';
+    }
+    level_details_enemies.onclick = function(){
+        showDetails(detailed_enemies);
+    }
+    level_details_shops.onclick = function(){
+        showDetails(detailed_shops);
+    }
+    level_details_treasures.onclick = function(){
+        showDetails(detailed_chest);
+    }
+    level_details_materials.onclick = function(){
+        showDetails(detailed_materials);
+    }
+    level_details_residents.onclick = function(){
+        showDetails(detailed_residents);
+    }
+    level_details_landmarks.onclick = function(){
+        showDetails(detailed_landmarks);
+    }
+    //get characters equipment
+    function getEquipment(character_id){
+        character_equipment.style.fontSize = '9px';
+        character_equipment.style.marginLeft = '12px';
+        character_equipment_arr.length = 0;
+        character_equipment.innerHTML = "";
+        for(var i = 0; i < player_equipment.length; i++){
+            if(character_id == player_equipment[i].player_id){
+                character_equipment_arr.push(player_equipment[i]);
+            }
+        }
+        character_equipment.style.display = 'flex';
+        character_equipment.innerHTML = "id: "+character_equipment_arr[0].player_id;
+        var character_weapon = document.createElement('div');
+        character_equipment.appendChild(character_weapon);
+        if(character_equipment_arr[0].weapon === null){
+            character_weapon.innerHTML = "Weapon: None";
+        }else{
+            character_weapon.innerHTML = "Weapon :"+character_equipment_arr[0].weapon;
+        }
+        var character_head_gear = document.createElement('div');
+        character_equipment.appendChild(character_head_gear);
+        if(character_equipment_arr[0].head_gear === null){
+            character_head_gear.innerHTML = "Head: None";
+        }else{
+            character_head_gear.innerHTML = "Head :"+character_equipment_arr[0].head_gear;
+        }
+        var character_torso_gear = document.createElement('div');
+        character_equipment.appendChild(character_torso_gear);
+        if(character_equipment_arr[0].torso_gear === null){
+            character_torso_gear.innerHTML = "Body: None";
+        }else{
+            character_torso_gear.innerHTML = "Body :"+character_equipment_arr[0].torso_gear;
+        }
+        var character_arm_gear = document.createElement('div');
+        character_equipment.appendChild(character_arm_gear);
+        if(character_equipment_arr[0].arm_gear === null){
+            character_arm_gear.innerHTML = "Arms: None";
+        }else{
+            character_arm_gear.innerHTML = "Arm :"+character_equipment_arr[0].arm_gear;
+        }
+        var character_foot_wear = document.createElement('div');
+        character_equipment.appendChild(character_foot_wear);
+        if(character_equipment_arr[0].foot_wear === null){
+            character_foot_wear.innerHTML = "Bottoms: None";
+        }else{
+            character_foot_wear.innerHTML = "Bottoms :"+character_equipment_arr[0].foot_wear;
+        }
+        var character_accessory = document.createElement('div');
+        character_equipment.appendChild(character_accessory);
+        if(character_equipment_arr[0].accessory === null){
+            character_accessory.innerHTML = "Accessory: None";
+        }else{
+            character_accessory.innerHTML = "Accessory :"+character_equipment_arr[0].accessory;
+        }
+    }
+    //level details enemies
+    //get enemies function
+    function getEnemies(level_id){
+        enemy_details_arr.length = 0;
+        enemy_details_box.innerHTML = "";
+        for(var i = 0;  i < mon.length; i++){
+            if(mon[i].level_id === level_id){
+                enemy_details_arr.push(mon[i]);
+            }
+        }
+        //display box
+        enemy_details_arr.forEach(enemy=>{
+        var enemy_display = document.createElement('div');
+        Object.assign(enemy_display.style,{ width: '104px', height: '120px', border: '1px solid black', display: 'flex', flexDirection: 'column'});
+        enemy_details_box.appendChild(enemy_display);
+        //display enemy name
+        var enemy_name_display = document.createElement('div');
+        enemy_name_display.innerHTML = enemy.name;
+        enemy_display.appendChild(enemy_name_display);
+        enemy_name_display.style.fontSize = '12px';
+        enemy_name_display.style.marginLeft = '4px';
+        //display enemy box
+        var enemy_display_1 = document.createElement('div');
+        enemy_display.appendChild(enemy_display_1);
+        Object.assign(enemy_display_1.style,{ width: '104px', height: '52px', border: "1px solid black", display: 'flex', flexDirection: 'row'});
+        //display enemy picture
+        var enemy_photo = document.createElement('div');
+        enemy_display_1.appendChild(enemy_photo);
+        Object.assign(enemy_photo.style,{width: '52px', height: '52px', border: '1px black solid'});
+        //enemy health, gil, and experience 
+        var enemy_stat_1 = document.createElement('div');
+        enemy_display_1.appendChild(enemy_stat_1);
+        Object.assign(enemy_stat_1.style,{ width: '52px', height: '52px', border: 'red solid 1px', fontSize: '10px'});
+        enemy_stat_1.innerHTML = "hp: "+enemy.HP+"<br>exp: "+enemy.EXP+"<br>gil: "+enemy.GIL;
+        //enemy POW(power), PD(physical defense), MD(magical defense), Weak, and Resist
+        var enemy_display_2 = document.createElement('div');
+        enemy_display.appendChild(enemy_display_2);
+        Object.assign(enemy_display_2.style,{ width: '104px', height: '52px', border: '1px solid blue', display: 'flex', flexDirection: 'row'});
+        //enemy stat 2
+        var enemy_stat_2 = document.createElement('div');
+        enemy_display_2.appendChild(enemy_stat_2);
+        Object.assign(enemy_stat_2.style,{width: '52px', height: '52px', border: 'solid black 1px', fontSize: '10px'});
+        enemy_stat_2.innerHTML = "POW: "+enemy.POW+"<br>PD: "+enemy.PD+"<br>MD: "+enemy.MD;
+        //enemy stat 3
+        var enemy_stat_3 = document.createElement('div');
+        enemy_display_2.appendChild(enemy_stat_3);
+        Object.assign(enemy_stat_3.style,{width: '52px', height: '52px', border: 'solid black 1px', fontSize: '10px'});
+        enemy_stat_3.innerHTML = "Weak: "+enemy.Weak+"<br>Resist: "+enemy.Resist;
+    });
+    }
+    //get shops
+    function getShop(level_id){
+        shops_details_arr = [];
+        shops_details_box.innerHTML = "";
+        for(var i = 0; i < shops.length; i++){
+            if(shops[i].level_id === level_id){
+                shops_details_arr.push(shops[i]);
+            }
+        } 
+       //display shops
+        shops_details_arr.forEach(shop=>{
+            var shop_box = document.createElement('div');
+            shops_details_box.appendChild(shop_box);
+            Object.assign(shop_box.style,{width: '102px', height: 'auto', border: 'red 1px solid', display: 'flex', flexDirection: 'column'});
+            var shop_name = document.createElement('div');
+            shop_name.innerHTML = shop.name;
+            shop_box.appendChild(shop_name);
+            //display shop items
+            var shop_items = document.createElement('div');
+            shop_box.appendChild(shop_items);
+            shop_items.style.marginLeft = "6px";
+            shop_items.style.fontSize = "11px";
+            //find items
+            item_shop_inventory.forEach(inven_items=>{
+                if(inven_items.shop_id === shop.id){
+                    var item = items.find(i => i.id === inven_items.inventory_id);
+                    if(!item) return;
+
+                    //display item
+                    var item_display = document.createElement('div');
+                    item_display.innerHTML = `${item.name} (${item.cost}gil)`;
+                    shop_items.appendChild(item_display);
+                }
+            });
+            //find spells
+            spell_shop_inventory.forEach(inven_spells=>{
+                if(inven_spells.shop_id === shop.id){
+                    var spell = spells.find(i => i.id === inven_spells.spell_id);
+                    if(!spells) return;
+                    //display spell
+                    var spell_display = document.createElement('div');
+                    spell_display.innerHTML = `${spell.name} (${spell.cost}gil)`;
+                    shop_items.appendChild(spell_display);
+                }
+            });
+            //find weapons
+            weapon_shop_inventory.forEach(inven_weapons=>{
+                if(inven_weapons.shop_id === shop.id){
+                    var weapon = weapons.find(i => i.id === inven_weapons.weapon_id);
+                    if(!weapons) return;
+                    //display weapons
+                    var weapon_display = document.createElement('div');
+                    weapon_display.innerHTML = `${weapon.name} (${weapon.cost}gil)`;
+                    shop_items.appendChild(weapon_display);
+                }
+            });
+            //find armor
+            armor_shop_inventory.forEach(inven_armors=>{
+                if(inven_armors.shop_id === shop.id){
+                    var armor = armors.find(i => i.id === inven_armors.armor_id);
+                    if(!armors) return;
+                    //display armor
+                    var armor_display = document.createElement('div');
+                    armor_display.innerHTML = `${armor.name} (${armor.cost}gil)`;
+                    shop_items.appendChild(armor_display);
+                }
+            });
+        });    
+    }
+    //get chest 
+    function getChest(level_id){
+        chest_details_arr.length = 0;
+        chest_details_box.innerHTML = "";
+
+        for(var i = 0; i < chests.length; i++){
+            if(chests[i].level_id ===level_id){
+                chest_details_arr.push(chests[i]);
+            }
+        }
+        chest_details_arr.forEach(chest_detail=>{
+            var chest_display = document.createElement('div');
+            chest_details_box.appendChild(chest_display);
+            var chest_object_display = document.createElement('div');
+            chest_details_box.appendChild(chest_object_display);
+            Object.assign(chest_object_display.style,{width: '102px', height: '42px', border: '1px solid black', display: 'flex', flexDirection: 'row'});
+            var chest_object_picture = document.createElement('div');
+            chest_object_display.appendChild(chest_object_picture);
+            Object.assign(chest_object_picture.style,{width: '42px', height: '42px', border: '1px solid black', textAlign: 'center', fontSize: '33px'});
+            var chest_object_name = document.createElement('div');
+            chest_object_name.style.fontSize = '9px';
+            chest_object_display.appendChild(chest_object_name);
+
+            if(chest_detail.found !== true){
+                chest_display.innerHTML = "???";
+                chest_display.style.fontSize = '13px';
+                chest_object_picture.innerHTML = "?";
+                chest_object_name.innerHTML = "???";
+            }else{
+                chest_display.style.fontSize = '13px';
+                chest_display.innerHTML = "Chest: "+chest_detail.id;
+                chest_object_name.innerHTML = chest_detail.object;
+            }
+
+        });
+        
+    }
+    //get materials
+    function getMaterials(level_id){
+        materials_details_arr = [];
+        material_details_box.innerHTML = "";
+        material_location.forEach(material=>{
+            if(material.level_id === level_id){
+                var mat = materials.find(i => i.id === material.material_id);
+                if(!material) return;
+                var material_name = document.createElement('div');
+                material_details_box.appendChild(material_name);
+                material_name.style.fontSize = '10px';
+                material_name.innerHTML = `${mat.name}`;
+                var material_display = document.createElement('div');
+                material_details_box.appendChild(material_display);
+                Object.assign(material_display.style,{width: '102px', height: '42px', border: '1px solid black', display: 'flex', flexDirection: 'row'});
+                var material_details_image = document.createElement('div');
+                material_display.appendChild(material_details_image);
+                Object.assign(material_details_image.style,{width: '42px', height: '42px', border: '1px solid black'});
+                var material_desc_display = document.createElement('div');
+                material_display.appendChild(material_desc_display);
+                Object.assign(material_desc_display.style,{width: '60px', height: '42px', fontSize: '9px'});
+                material_desc_display.innerHTML = `${mat.desc}`;
+            }
+        }); 
+    }
+    //get residents
+    function getResidents(level_id){
+        residents_details_arr = [];
+        residents_details_box.innerHTML = "";
+        for(var i = 0; i < residents.length; i++){
+            if(residents[i].level_id === level_id){
+                residents_details_arr.push(residents[i]);
+            }
+        }
+        residents_details_arr.forEach(resident=>{
+            var resident_name = document.createElement('div');
+            residents_details_box.appendChild(resident_name);
+            resident_name.style.fontSize = '11px';
+            var resident_display = document.createElement('div');
+            residents_details_box.appendChild(resident_display);
+            Object.assign(resident_display.style,{width: '102px', height: '42px', border: 'black 1px solid', display: 'flex', flexDirection: 'row'});
+            var resident_profile_picture = document.createElement('div');
+            resident_display.appendChild(resident_profile_picture);
+            Object.assign(resident_profile_picture.style,{height: '42px', width: '42px', border: '1px solid black', display: 'flex', flexDirection: 'column', textAlign: 'center', fontSize: '28px'});
+            var resident_desc_display = document.createElement('div');
+            Object.assign(resident_desc_display.style,{fontSize: '8px', width: '60px'});
+            resident_display.appendChild(resident_desc_display);
+            if(resident.found !== true){
+                resident_name.innerHTML = '???';
+                resident_profile_picture.innerHTML = '?';
+                resident_desc_display.innerHTML = '???';
+            }else {
+                resident_name.innerHTML = resident.name;
+                resident_desc_display.innerHTML = resident.desc;
+            }
+        });
+    }
+    //get landmarks
+    function getLandmarks(level_id){
+        landmarks_details_arr = [];
+        landmarks_details_box.innerHTML = "";
+        for(var i = 0; i < landmarks.length; i++){
+            if(landmarks[i].level_id === level_id){
+                landmarks_details_arr.push(landmarks[i]);
+            }
+        }
+        landmarks_details_arr.forEach(landmark=>{
+            var landmark_detail_name = document.createElement('div');
+            landmarks_details_box.appendChild(landmark_detail_name);
+            Object.assign(landmark_detail_name.style,{fontSize: '11px'});
+            var landmark_display = document.createElement('div');
+            landmarks_details_box.appendChild(landmark_display);
+            Object.assign(landmark_display.style,{width: '102px', height: '42px', display: 'flex', flexDirection: 'row', border: '1px solid black'});
+            var landmark_details_picture = document.createElement('div');
+            landmark_display.appendChild(landmark_details_picture);
+            Object.assign(landmark_details_picture.style,{ width: '42px', height: '42px', border: '1px solid black', display: 'flex', flexDirection: 'column', textAlign: 'center', fontSize: '28px'});
+            var landmark_detail_desc = document.createElement('div');
+            landmark_display.appendChild(landmark_detail_desc);
+            Object.assign(landmark_detail_desc.style,{width: '62px', height: '42px', fontSize: '8px'});
+            if(landmark.found !== true){
+                landmark_detail_name.innerHTML = '???';
+                landmark_details_picture.innerHTML = '?';
+                landmark_detail_desc.innerHTML = '???';
+            }
+        });
+    }
+    var start_level = document.getElementById('start_level');
+    elementHover(start_level,'yellow','white');
+    start_level.onclick = function(){
+        console.log(start_level_id);
+        console.log(party[0].name);
+        battler_player_name.innerHTML = party[0].name;
+        //add level
+        showScreen("world_holder_0");
+        controller.style.display = 'flex';
+        body.animate(
+            [
+                {backgroundColor: 'white'},
+                {backgroundColor: '#222'}
+            ],
+            {
+                iterations: 1,
+                duration: 420,
+                easing: 'ease-in',
+                fill: 'forwards'
+            }
+        );
+    }
+    //level start
+    var defeated = 0;
+    var level = document.getElementById('level');
+    var exp = document.getElementById('exp');
+    var gil = document.getElementById('gil');
+    var display_defeated = document.getElementById('display_defeated');
+
+    function updateDisplay(){
+        level.innerHTML = "Level: "+player[0].level;
+        exp.innerHTML = "EXP: "+player[0].current_exp+"/"+player[0].to_next_lvl;
+        gil.innerHTML = "GIL: "+player[0].GIL;
+        display_defeated.innerHTML = "Defeated: "+defeated;
+    }
+    
+    updateDisplay();
+    function randmonNumber(min,max){
+        return Math.floor(Math.random() * (max - min + 1));
+    }
+
+    var mon_display_box = document.getElementById('mon_display_box');
+    var next_btn = document.getElementById('next_btn');
+    var mon_num = 0;
+
+    next_btn.onclick = function nextBattle(){
+
+        if( defeated === 34 ){
+            mon_display_box.innerHTML = boss[0].name+"<br>HP:"+boss[0].HP+"<br>POW:"+boss[0].POW+"PD:"+boss[0].PD+"<br>MD:"+boss[0].MD+"<br>Weakness:"+boss[0].Weak+"<br>Resist:"+boss[0].Resist+"<br>GIL:"+boss[0].GIL+"<br>EXP:"+boss[0].EXP;
+        }else{
+            mon_num = randmonNumber(0,6);
+            mon_display_box.innerHTML = mon[mon_num].name+"<br>HP:"+mon[mon_num].HP+"<br>POW:"+mon[mon_num].POW+"<br>PD:"+mon[mon_num].PD+"<br>MD"+mon[mon_num].MD+"<br>Weakness:"+mon[mon_num].Weak+"<br>Resist:"+mon[mon_num].Resist+"<br>GIL:"+mon[mon_num].GIL+"<br>EXP:"+mon[mon_num].EXP;
+        }
+
+        player[0].current_exp++;
+        if(player[0].current_exp == player[0].to_next_lvl){
+            player[0].current_exp = 0;
+            player[0].level++;
+            player[0].to_next_lvl+=10;
+        }
+        defeated += 1;
+        updateDisplay();
+        player[0].GIL+=mon[mon_num].GIL;
+    }
+
+    var item_holder = document.getElementById('item_holder');
+
+    var inventory_items = [
+        {id: 1, name:'potion',quantity:1}
+    ];
+    var inventory_holder = document.getElementById('inventory_holder');
+
+    items.forEach(item=>{
+        var product = document.createElement('div');
+        Object.assign(product.style,{width: "48px", height: "48px", fontSize:"12px",border:"1px solid black",textAlign:'center',marginRight:'4px',borderRadius:'7px',cursor:'pointer'});
+        product.innerHTML = item.name+"<br>"+item.cost+"gil";
+        item_holder.appendChild(product);
+        
+        product.onclick = function(){
+            if(player[0].GIL >= item.cost){
+                player[0].GIL -= item.cost;
+                updateDisplay();
+                found = false;
+                for(var i = 0; i< inventory_items.length; i++){
+                if (item.name == inventory_items[i].name){
+                    inventory_items[i].quantity += 1;
+                    found = true;
+                    message_box.innerHTML = item.name+" obtained!";
+                    break;
+                    }
+                }
+                if(!found){
+                    inventory_items.push({name:item.name, quantity: 1});
+                    message_box.innerHTML = item.name+" obtained!";
+                }
+                localStorage.setItem("inventory_items",JSON.stringify(inventory_items));
+                renderInventory();
+            }else{
+                message_box.innerHTML = "insuficient funds";
+            }
+            
+        }
+    });
+
+    function renderInventory(){
+        inventory_holder.innerHTML = "";
+        inventory_items.forEach(inv_item => {
+            var slot = document.createElement('div');
+            Object.assign(slot.style, {
+                width: "48px",
+                height: "48px",
+                fontSize: "12px",
+                border: "1px solid black",
+                textAlign: 'center',
+                marginRight: '4px',
+                borderRadius: '7px',
+                cursor: 'pointer'
+            });
+            slot.innerHTML = inv_item.name + "<br>" + "x" + inv_item.quantity;
+            inventory_holder.appendChild(slot);
+        });
+    }
+
+    renderInventory();
+    //hover function
+    function elementHover(element,color1,color2){
+        element.addEventListener('mouseover',()=>{
+            element.style.color = color1;
+        });
+        element.addEventListener('mouseout',()=>{
+            element.style.color = color2;
+        });
+        
+    }
+//level_code 
+    function onHover(element,color_1,color_2){
+    element.addEventListener('mouseover', ()=>{
+        element.style.color = color_1;
+    });
+    element.addEventListener('mouseout', ()=>{
+        element.style.color = color_2;
+    });
+}
+//chest
+//open chest animation
+function chestAnimation(chest_element,frames){
+    const chest_open = chest_element.animate(
+            [
+                {color: 'white'},
+                {color: 'yellow'}
+            ],
+            {
+                iteration: 1,
+                easing: 'linear',
+                duration: 120,
+                fill: 'forwards'
+            }
+        );
+        chest_open.onfinish = ()=>{
+            if(frames < 3){
+                frames ++;
+                chest_element.style.backgroundImage = 'url(./treasure_chest_sprites/red_chest_'+frames+'.png)';
+                chestAnimation(chest_element,frames);
+            }else{
+                message_box.style.display = 'flex';
+       
+                message_box_image.style.backgroundImage = 'url(./treasure_chest_sprites/red_chest_3.png)';
+            }
+        };
+}
+if(chests[0].found !== true){
+    chest_00.style.backgroundImage = 'url(./treasure_chest_sprites/red_chest_3.png)';
+}else chest_00.style.backgroundImage = 'url(./treasure_chest_sprites/red_chest_0.png)';
+let chest_interactable = false;
+chest_00.onclick = function(){
+        if(!chest_interactable) return;
+            openChest(0);
+        };
+
+//open chest
+function openChest(chest_index){
+    
+        let chest = chests[chest_index];
+        chest_interactable = false;
+        if(chest.found){
+            message_box.style.display = 'flex';
+            message_box_header.innerHTML = 'Empty...';
+            message_box_image.style.backgroundImage = 'url(./treasure_chest_sprites/red_chest_3.png)'
+            return;
+        }
+        chest.found = true;
+        //save chest
+        localStorage.setItem("chests",JSON.stringify(chests));
+        alert_box_chest.style.display = 'none';
+        chestAnimation(chest.element,0);
+         message_box_header.innerHTML = chest.object+" Obtained";
+        let inven_item = inventory_items.find(i => i.name === chest.object);
+        if(inven_item){
+            inven_item.quantity++;
+        }else{
+            inventory_items.push({ name: chest.object, quantity: 1});
+        }
+        //save inventory
+        localStorage.setItem("inventory_items",JSON.stringify(inventory_items));
+        renderInventory();
+}
+/* ======================
+   CONSTANTS
+====================== */
+const VIEW_WIDTH = 620;
+
+/* ======================
+   DOM
+====================== */
+const cube = document.getElementById("cube");
+const playerEl = document.getElementById("player_object");
+var player_position_display = document.getElementById('player_position_display');
+
+const btnLeft  = document.getElementById("game_left");
+const btnRight = document.getElementById("game_right");
+
+/* ======================
+   INPUT
+====================== */
+const input = { left: false, right: false };
+
+btnLeft.onmousedown  = () => input.left = true;
+btnLeft.onmouseup    = () => input.left = false;
+btnRight.onmousedown = () => input.right = true;
+btnRight.onmouseup   = () => input.right = false;
+
+/* ======================
+   PLAYER (WORLD SPACE)
+====================== */
+const player_p = {
+  x: 420,
+  z: -420,
+  speed: 2,
+  facing: "right"
+};
+var player_position = player_p.x;
+player_position_display.innerHTML = "X: "+player_position;
+/* ======================
+   CAMERA
+====================== */
+const camera = {
+  x: 0,
+  rotX: -9,
+  rotY: 0,
+  followSpeed: 0.1
+};
+
+/* ======================
+   LOGIC
+====================== */
+var moving = false;
+var in_battle = false;
+function updatePlayer() {
+  if (input.right && in_battle == false) {
+    moving = true;
+    player_p.x += player_p.speed;
+    player_position = player_p.x;
+    playerPosition(player_p.x);
+    player_p.facing = "right";
+  }
+  if (input.left && player_p.x > 300 && in_battle == false) {
+    moving = true;
+    player_p.x -= player_p.speed;
+    player_position = player_p.x;
+    playerPosition(player_p.x);
+    player_p.facing = "left";
+  }
+
+  if(!input.right && !input.left){
+    moving = false;
+  }
+  if(in_battle){
+    moving = false;
+  }
+
+  if(moving == false){
+    playerEl.style.backgroundImage = "url(./character_sprites/spr_character_idle_00.gif)";
+  }else{
+    playerEl.style.backgroundImage = "url(./character_sprites/spr_character_00_walk.gif)";
+  }
+
+  // Player NEVER knows about camera
+  playerEl.style.left = player_p.x + "px";
+  playerEl.style.transform =
+    `translateZ(${player_p.z}px) scaleX(${player_p.facing === "left" ? -1 : 1})`;
+}
+//update player position
+var exit_click = false;
+function playerPosition(player_x_position){
+    player_position_display.innerHTML = "X: " + player_x_position;
+
+    // HQ alert
+    if (player_x_position < 342) {
+        
+        leave_level_display.style.display = 'flex';
+    } else {
+        leave_level_display.style.display = 'none';
+    }
+
+    // Chest logic
+    if (player_x_position > 890 && player_x_position < 988 && chests[0].found == false) {
+        chest_interactable = true;
+        alert_box_chest.style.display = 'flex';
+        alertBox(alert_box_chest);
+    }else{
+        chest_interactable = false;
+        alert_box_chest.style.display = 'none';
+    }
+    //enemy test
+    if(player_x_position >= 1088 ){
+        player_bubble.style.display = 'flex';
+        in_battle = true;
+        enemyAnimation();
+    }else {
+        player_bubble.style.display = 'none';
+        in_battle = false;
+    }
+}
+
+function updateCamera() {
+  const targetX = player_p.x - VIEW_WIDTH / 2;
+  camera.x += (targetX - camera.x) * camera.followSpeed;
+
+  cube.style.transform = `
+    rotateX(${camera.rotX}deg)
+    rotateY(${camera.rotY}deg)
+    translateX(${-camera.x}px)
+    translateZ(20px)
+  `;
+}
+
+/* ======================
+   LOOP
+====================== */
+function gameLoop() {
+  updatePlayer();
+  updateCamera();
+  requestAnimationFrame(gameLoop);
+}
+//Controller Buttons
+var game_button_x = document.getElementById('game_button_x');
+var game_button_y = document.getElementById('game_button_y');
+onHover(game_button_x,'yellow','white');
+onHover(game_button_y,'yellow','white');
+
+
+gameLoop();
+//npc
+var npc_00 = document.getElementById('npc_00');
+var alert_box = document.getElementById('alert_box');
+var player_character = document.getElementById('player_character');
+var npc_character = document.getElementById('npc_character');
+var dialogue_box = document.getElementById('dialogue_box');
+var dialogue_display = document.getElementById('dialogue_display');
+var npc_name = document.getElementById('npc_name');
+var npc_text = document.getElementById('npc_text');
+var text_press_y = document.getElementById('text_press_y');
+var hq = document.getElementById('hq');
+var leave_level_yes = document.getElementById('leave_level_yes');
+var leave_level_display = document.getElementById('leave_level_display');
+
+hq.animate(
+    [
+        {top: '214px'},
+        {top: '218px'},
+        {top: '220px'},
+        {top: '218px'},
+        {top: '213px'}
+    ],
+    {
+        iterations: Infinity,
+        duration: 2400,
+        easing: 'ease-in-out',
+    }
+);
+onHover(leave_level_yes,'yellow','white');
+
+onHover(text_press_y,'yellow','white');
+
+npc = [
+    {id: 0, element_id : npc_00 , name: 'Rikki', top: '18px', left: '24px', dialogue: 'It has been my dream to climb Solair mountain.'},
+];
+var npc_text_arr = [];
+npc_00.addEventListener('mouseover', ()=>{
+    alert_box.style.display = 'flex';
+    alertBox(alert_box);
+});
+npc_00.addEventListener('mouseout', ()=>{
+    alert_box.style.display = 'none';
+});
+//npc on click
+var text_active = false;
+npc_00.onclick = function(){
+    dialogue_box.style.display = 'flex';
+    npc_name.innerHTML = npc[0].name;
+    textAnimation(npc[0].dialogue,0);
+}
+text_press_y.onclick = function(){
+    npc_text.innerHTML = "";
+    dialogue_box.style.display = 'none';
+    }
+
+
+//alert above npc's head
+function alertBox(element){
+    element.animate(
+        [
+            {transform: 'rotate(0deg)'},
+            {transform: 'rotate(15deg)'},
+            {transform: 'rotate(0deg)'},
+            {transform: 'rotate(-15deg)'}
+        ],
+        {
+            iterations : Infinity,
+            duration: 200,
+        }    
+    );
+}
+//dialogue box animation
+function textAnimation(text,text_position){
+    const button_blink = text_press_y.animate(
+        [
+            {borderColor: 'grey'},
+            {borderColor: 'white'}
+        ],
+        {
+            iteration: 1,
+            duration: 24,
+            easing: 'linear',
+        }
+    );
+    button_blink.onfinish=()=>{
+        if(text_position < text.length){
+            npc_text.innerHTML += text[text_position];
+            text_position ++;
+            textAnimation(text,text_position);
+        }else{
+            npc_text.innerHTML += '';
+        }
+    }
+}
+npc_character.style.backgroundImage = 'url(./npc_sprites/npc_00_dialogue.png)';
+player_character.style.backgroundImage = 'url(./character_sprites/spr_character_00_dialogue.png)';
+//back to character select
+leave_level_yes.onclick = function(){
+    showScreen("character_select_screen");
+    leave_level_display.style.display = 'none';
+    player_p.x = 420;
+    player_position = player_p.x;
+    player_p.facing = "right";
+}
+let enemyAnim = null;
+
+//battler animation
+function battlerDisplay(mon_id){
+    battler.style.display = 'flex';
+    const battler_display = battler.animate(
+        [
+            {opacity: 0},
+            {opacity: 1}
+        ],
+        {
+            iterations: 1,
+            duration: 900,
+            fill: 'forwards',
+            easing: 'ease-in'
+        }
+    );
+    battler_display.onfinish=()=>{
+        player_bubble.style.display = 'none';
+        battler_enemy_name.innerHTML += mon[mon_id].name;
+        var enemy_health_display = document.createElement('div');
+        battler_enemy_def.appendChild(enemy_health_display);
+        Object.assign(enemy_health_display.style,{ height: '12px', backgroundImage: 'linear-gradient(green,darkgreen)', borderRadius: '7px', position: 'relative', top: '-2px'});
+        healthBarAnimation(enemy_health_display);
+    };
+}
+function healthBarAnimation(element){
+    element.animate(
+        [
+            {width: '0%'},
+            {width: '100%'}
+        ],
+        {
+            iterations: 1,
+            duration: 820,
+            fill: 'forwards',
+            easing: 'ease-in'
+        }
+    );
+}
+
+function enemyAnimation() {
+
+    // stop whatever animation was running
+    if (enemyAnim) {
+        enemyAnim.cancel();
+        enemyAnim = null;
+    }
+
+    if (!in_battle) {
+        enemyAnim = enemy_0.animate(
+            [
+                { left: '1200px', transform: 'scaleX(1) translateZ(-142px)' },
+                { left: '1300px', transform: 'scaleX(0) translateZ(-142px)' },
+                { left: '1300px', transform: 'scaleX(-1) translateZ(-142px)' },
+                { left: '1000px', transform: 'scaleX(-1) translateZ(-142px)' },
+                { left: '1000px', transform: 'scaleX(0) translateZ(-142px)' },
+                { left: '1200px', transform: 'scaleX(1) translateZ(-142px)' }
+            ],
+            {
+                iterations: Infinity,
+                duration: 9000,
+                easing: 'linear'
+            }
+        );
+    } else {
+        //battler animation
+        battlerDisplay(3);
+        enemyAnim = enemy_0.animate(
+            [
+                { top: '323px',transform: 'scaleX(1) translateZ(-142px)' },
+                { top: '250px',transform: 'scaleX(0) translateZ(-100px)' },
+                { top: '323px',transform: 'scaleX(-1) translateZ(0px)' },
+            ],
+            {
+                iterations: 1,
+                duration: 720,
+                easing: 'linear',
+                fill: 'forwards'
+            }
+        );
+    }
+}
+
+enemyAnimation();
+
+function showScreen(screenId){ 
+    const screens = document.querySelectorAll(".screen");
+     screens.forEach(screen =>{ screen.style.display = (screen.id === screenId) ? "flex" : "none";
+
+      }); // Save active screen
+      localStorage.setItem("activeScreen", screenId);
+    }
+
+var potion_00 = document.getElementById('potion_00');
+var inventory_display = document.getElementById('inventory_display');
+game_button_start.onclick = function(){
+    inventory_display.style.display = 'flex';
+}
+
+potion_00.onclick = function () {
+    let found = false;
+
+    // Look for an existing Potion
+    for (let i = 0; i < inventory_items.length; i++) {
+        if (inventory_items[i].name === "potion") {
+            inventory_items[i].quantity += 1;
+            found = true;
+            break;
+        }
+    }
+
+    // If no Potion was found, add a new one
+    if (!found) {
+        inventory_items.push({ name: "potion", quantity: 1 });
+    }
+
+    //save inventory
+    localStorage.setItem("inventory_items",JSON.stringify(inventory_items));
+    // Show message
+    message_box.style.display = 'flex';
+    message_box_header.innerHTML = "Potion obtained!";
+    message_box_image.style.backgroundImage = 'url(./icon_images/icon_00.png)';
+
+    // Update inventory UI
+    renderInventory();
+};
+
+//restore saved data
+function loadScreen() {
+    const saved = localStorage.getItem("activeScreen");
+    showScreen(saved || "character_select_screen");
+}
+function loadInventory() {
+    const saved = localStorage.getItem("inventory_items");
+    if (saved) inventory_items = JSON.parse(saved);
+    renderInventory();
+}
+function renderParty(){
+    party.forEach(p=>{
+         battler_player_name.innerHTML = party[0].name;
+    });
+
+   
+}
+function loadParty(){
+    const saved = localStorage.getItem("party");
+    if(saved) party = JSON.parse(saved);
+    renderParty();
+}
+function bindChestElements(){
+    chests.forEach(chest => {
+        chest.element = document.getElementById(chest.elementId);
+    });
+}
+function applyChestState(){
+    chests.forEach((chest, index) => {
+        // if (chest.found) {
+        //     chest.element.style.backgroundImage ='url(./treasure_chest_sprites/red_chest_3.png)';
+        //     chest.element.style.pointerEvents = 'none';
+        // }
+    });
+}
+function loadChests(){
+    const saved = localStorage.getItem("chests");
+    if(saved) chests = JSON.parse(saved);
+    bindChestElements();
+    applyChestState();
+}
+window.onload = () => {
+    loadScreen();
+    loadInventory();
+    loadParty();
+    loadChests();
+};
+
+</script>
