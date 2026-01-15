@@ -154,7 +154,7 @@
                         </div>
                     </div>
                     <div id="npc_rig_01" style="position: absolute; inset: 0; transform-style: preserve-3d;">
-                        <div id="npc_00" style="position: absolute; width: 64px; height: 64px; transform-style: preserve-3d; border: 1px solid transparent; top: 354px; left: 740px; cursor: pointer; background-image: url('./npc_sprites/npc_00.png'); background-position: bottom; background-size: contain; background-repeat: no-repeat; transform: translateZ(-12px);">
+                        <div id="npc_00" style="position: absolute; width: 64px; height: 64px; transform-style: preserve-3d; border: 1px solid transparent; top: 354px; left: 740px; cursor: pointer; background-image: url('images/npc_00.png'); background-position: bottom; background-size: contain; background-repeat: no-repeat; transform: translateZ(-12px);">
                             <div id="alert_box" style="position: absolute; width: 16px; height: 16px; border-radius: 32px; background-color: white; top: -18px; left: 24px; text-align: center; display: none; flex-direction: column; box-shadow: 0px 0px 10px 7px rgba(0, 0, 0, 0.420);">!</div>
                         </div>
                     </div>
@@ -1138,18 +1138,18 @@ function chestAnimation(chest_element,frames){
         chest_open.onfinish = ()=>{
             if(frames < 3){
                 frames ++;
-                chest_element.style.backgroundImage = 'url(./treasure_chest_sprites/red_chest_'+frames+'.png)';
+                chest_element.style.backgroundImage = 'url(images/red_chest_'+frames+'.png)';
                 chestAnimation(chest_element,frames);
             }else{
                 message_box.style.display = 'flex';
        
-                message_box_image.style.backgroundImage = 'url(./treasure_chest_sprites/red_chest_3.png)';
+                message_box_image.style.backgroundImage = 'url(images/red_chest_3.png)';
             }
         };
 }
 if(chests[0].found !== true){
-    chest_00.style.backgroundImage = 'url(./treasure_chest_sprites/red_chest_3.png)';
-}else chest_00.style.backgroundImage = 'url(./treasure_chest_sprites/red_chest_0.png)';
+    chest_00.style.backgroundImage = 'url(images/red_chest_3.png)';
+}else chest_00.style.backgroundImage = 'url(images/red_chest_0.png)';
 let chest_interactable = false;
 chest_00.onclick = function(){
         if(!chest_interactable) return;
@@ -1164,7 +1164,7 @@ function openChest(chest_index){
         if(chest.found){
             message_box.style.display = 'flex';
             message_box_header.innerHTML = 'Empty...';
-            message_box_image.style.backgroundImage = 'url(./treasure_chest_sprites/red_chest_3.png)'
+            message_box_image.style.backgroundImage = 'url(images/red_chest_3.png)'
             return;
         }
         chest.found = true;
@@ -1611,3 +1611,4 @@ window.onload = () => {
 
 
 </script>
+
